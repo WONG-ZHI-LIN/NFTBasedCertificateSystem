@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Home Page</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('adminhome.jpg') no-repeat center center fixed;
+            background-size: cover; /* Ensure the background covers the entire page */
+        }
+
+        .header {
+            background-color: #4A3E8E;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .header .user-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .header .user-menu img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .header .dropdown {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .header .dropdown a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .header .dropdown a:hover {
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {    
+            width: 99%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-group button {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .btn-issue {
+            background-color: #c070fa;
+            color: white;
+        }
+
+        .btn-issue:hover {
+            background-color: #ae49f6;
+        }
+
+        .btn-download {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-download:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background for readability */
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">MMU Admin Portal</div>
+        <div class="user-menu">
+            <img src="adminicon.png" alt="User Icon" onclick="toggleDropdown()">
+            <div class="dropdown">
+                <a href="adminEditProfile.html">Edit Profile</a>
+                <a href="admin_login.html">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>MMU Certificate Generator</h2>
+        <form id="certificateForm">
+            <!-- Certificate Name -->
+            <div class="form-group">
+                <label for="certName">Certificate Name</label>
+                <input type="text" id="certName" name="certName" placeholder="Enter Certificate Name" required>
+            </div>
+
+            <!-- Student Name -->
+            <div class="form-group">
+                <label for="studentName">Student Name</label>
+                <input type="text" id="studentName" name="studentName" placeholder="Enter Student Name" required>
+            </div>
+
+            <!-- Student ID -->
+            <div class="form-group">
+                <label for="studentId">Student ID</label>
+                <input type="text" id="studentId" name="studentId" placeholder="Enter Student ID" required>
+            </div>
+
+            <!-- Program Name -->
+            <div class="form-group">
+                <label for="programName">Program Name</label>
+                <input type="text" id="programName" name="programName" placeholder="Enter Program Name" required>
+            </div>
+
+            <!-- Issue Date -->
+            <div class="form-group">
+                <label for="issueDate">Issue Date</label>
+                <input type="date" id="issueDate" name="issueDate" required>
+            </div>
+
+            <!-- Grade/Classification -->
+            <div class="form-group">
+                <label for="grade">Grade/Classification</label>
+                <select id="grade" name="grade" required>
+                    <option value="" disabled selected>Select Grade/Classification</option>
+                    <option value="Foundation">Foundation</option>
+                    <option value="Diploma">Diploma</option>
+                    <option value="Bachelor Degree">Bachelor Degree</option>
+                    <option value="Postgraduate">Postgraduate</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="btn-group">
+                <button type="button" class="btn-issue" onclick="issueCertificate()">Issue Certificate</button>
+                <button type="button" class="btn-download" onclick="downloadCertificate()">Download Certificate</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Toggle dropdown menu
+        function toggleDropdown() {
+            const dropdown = document.querySelector('.dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+    
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function (e) {
+            const userMenu = document.querySelector('.user-menu');
+            const dropdown = document.querySelector('.dropdown');
+            if (!userMenu.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    
+        // Validate form fields
+        function validateForm() {
+            const form = document.getElementById('certificateForm');
+            const inputs = form.querySelectorAll('input, select');
+            for (let input of inputs) {
+                if (input.hasAttribute('required') && !input.value) {
+                    alert(`Please fill in the ${input.previousElementSibling.innerText}.`);
+                    input.focus();
+                    return false;
+                }
+            }
+            return true;
+        }
+    
+        // Issue Certificate Placeholder (to be connected to backend)
+        function issueCertificate() {
+            if (validateForm()) {
+                alert('Certificate issued! (Connect this button to your backend blockchain implementation)');
+            }
+        }
+    
+        function downloadCertificate() {
+            if (validateForm()) {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('landscape', 'pt', 'a4');
+                const pageWidth = doc.internal.pageSize.width;
+                const pageHeight = doc.internal.pageSize.height;
+        
+                // Set gold color for the border
+                doc.setDrawColor(218, 165, 32); // Gold color (RGB)
+                doc.setLineWidth(5);
+        
+                // Draw the gold border
+                doc.rect(20, 20, pageWidth - 40, pageHeight - 40, 'S'); // 'S' for stroke (border only)
+        
+                // Get form values
+                const certName = document.getElementById('certName').value;
+                const studentName = document.getElementById('studentName').value;
+                const studentId = document.getElementById('studentId').value;
+                const programName = document.getElementById('programName').value;
+                const issueDate = document.getElementById('issueDate').value;
+                const grade = document.getElementById('grade').value;
+        
+                // Add certificate content
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(28);
+                doc.text('CERTIFICATE OF ACHIEVEMENT', pageWidth / 2, 120, { align: 'center' });
+        
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(14);
+                doc.text('This certificate is proudly presented to', pageWidth / 2, 160, { align: 'center' });
+        
+                doc.setFont('times', 'italic');
+                doc.setFontSize(24);
+                doc.text(studentName, pageWidth / 2, 200, { align: 'center' });
+        
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(14);
+                doc.text(`For successfully completing the ${programName} program`, pageWidth / 2, 240, { align: 'center' });
+                doc.text(`with a ${grade} classification`, pageWidth / 2, 260, { align: 'center' });
+        
+                doc.setFontSize(12);
+                doc.text(`Student ID: ${studentId}`, pageWidth / 2, 300, { align: 'center' });
+                doc.text(`Issued on: ${issueDate}`, pageWidth / 2, 320, { align: 'center' });
+        
+                // Add footer with Chancellor's name
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(12);
+                doc.text('CHANCELLOR:', pageWidth / 2, 500, { align: 'center' });
+        
+                doc.setFont('times', 'italic');
+                doc.setFontSize(12);
+                doc.text('YABHG. TUN DATO’ SERI ZAKI TUN AZMI', pageWidth / 2, 520, { align: 'center' });
+        
+                // Save the PDF
+                doc.save(`${studentName}_Certificate.pdf`);
+            }
+        }
+        
+    </script>
+    <footer>
+        © 2024 MULTIMEDIA UNIVERSITY. ALL RIGHTS RESERVED.
+    </footer>
+</body>
+</html>
