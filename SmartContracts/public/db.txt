@@ -1,0 +1,40 @@
+1.Students Table
+Purpose: Store personal and academic information of students.
+Fields:
+student_id (Primary Key): Unique identifier for each student.
+name: Full name of the student.
+email: Student's email for communication.
+program: Program of study (e.g., BSc Computer Science).
+
+2. Administrators Table
+Purpose: Manage administrator information.
+Fields:
+admin_id (Primary Key): Unique identifier for each admin.
+name: Full name of the administrator.
+email: Admin's email address.
+contact: Contact number for admin support.
+
+3. Certificates Table
+Purpose: Store certification data.
+Fields:
+certificate_id (Primary Key): Unique identifier for each certificate.
+student_id (Foreign Key): Links to the Students table.
+program: Program name for which the certificate was issued.
+issue_date: Date of certificate issuance.
+blockchain_hash: Hash of the certificate stored on the blockchain.
+
+4. Transactions Table
+Purpose: Record interactions with the blockchain.
+Fields:
+transaction_id (Primary Key): Unique identifier for each transaction.
+certificate_id (Foreign Key): Links to the Certificates table.
+transaction_hash: Blockchain transaction hash.
+timestamp: Time of the transaction.
+
+5. Login Attempts Table (Optional)
+Purpose: Track login attempts for security and auditing.
+Fields:
+attempt_id (Primary Key): Unique identifier for each login attempt.
+user_id (Foreign Key): Links to the Users table.
+timestamp: Time of the login attempt.
+status: Login status (success or failure).

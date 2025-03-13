@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch Server with Debugging",
+        "type": "node",
+        "request": "launch",
+        "skipFiles": ["<node_internals>/**"],
+        "program": "${assign}/backend.js",  // Path to your Node.js entry file
+        "env": {
+          "NODE_ENV": "development",
+          "PORT": "3000" // The port on which your server runs
+        },
+        "outFiles": [
+          "${assign}/dist/**/*.js"
+        ],
+        "sourceMaps": true
+      },
+      {
+        "name": "Attach to Node.js Process",
+        "type": "node",
+        "request": "attach",
+        "skipFiles": ["<node_internals>/**"],
+        "port": 9229,  // Port for the debugging process
+        "address": "localhost",
+        "localRoot": "${assign}",
+        "remoteRoot": "/app",  // Needed if debugging a remote process (e.g., Docker container)
+        "sourceMaps": true
+      }
+    ]
+  }
+  

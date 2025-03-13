@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Home Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover; /* Ensure the background covers the entire page */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            text-align: left;
+        }
+
+        .logo-container a img {
+            width: 250px; /* Adjust the size of the logo */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        .system-title {
+            margin-top: 10px;
+            font-size: 60px; /* Adjust the font size to match */
+            line-height: 1.4; /* Spacing between lines */
+            color: #fff;
+            font-weight: bold;
+            text-align: left;
+            max-width: 50%; /* Limit to half the page width */
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .system-description {
+            font-size: 20px;
+            line-height: 1.5;
+            color: #fff;
+            margin-top: 10px;
+            text-align: left;
+            max-width: 50%; /* Limit to half the page width */
+        }
+
+        .drop-zone {
+            position: absolute;
+            right: 150px;
+            top: 40%;
+            transform: translateY(-50%);
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9); /* White background with slight transparency */
+            width: 700px;
+            height: 550px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for better visibility */
+            cursor: pointer;
+        }
+
+        .drop-zone.dragover {
+            background-color: rgba(227, 242, 253, 0.9); /* Light blue when dragging over */
+        }
+
+        .drop-zone img {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .drop-zone p {
+            font-size: 25px;
+            color: #555;
+        }
+
+        .file-details {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .file-details a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .file-details a:hover {
+            text-decoration: underline;
+        }
+
+        .drop-zone .select-file {
+            margin-top: 20px;
+        }
+
+        .drop-zone button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .drop-zone button:hover {
+            background-color: #0056b3;
+        }
+
+        .submit-button {
+            margin-top: 40px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-right: 285px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background for readability */
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <a href="https://www.mmu.edu.my/" target="_blank">
+            <img src="mmu2.png" alt="MMU Logo">
+        </a>
+        <div class="system-title">
+            NFT Based Certificate Verification System
+        </div>
+
+        <div class="system-description">
+            An easy way to check and verify your certificates.
+        </div>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+        <img src="draganddrop.png" alt="Upload Icon" />
+        <p>Drag and drop your PDF file<br>to view its contents</p>
+        <span>or</span>
+        <div class="select-file">
+            <button id="fileSelect">Select File</button>
+            <input type="file" id="fileInput" accept="application/pdf" hidden>
+        </div>
+        <div class="file-details" id="fileDetails"></div>
+    </div>
+
+    <div class="submit-container" style="position: absolute; top: 75%; right: 150px;">
+        <button class="submit-button" id="submitButton">Submit</button>
+    </div>
+
+    <footer>
+        © 2024 MULTIMEDIA UNIVERSITY. ALL RIGHTS RESERVED.
+    </footer>
+
+
+        <!-- External Script -->
+        <script src="app.js"></script>
+
+        <!-- Inline Script -->
+    <script>
+
+        const dropZone = document.getElementById("dropZone");
+        const studentAddress = localStorage.getItem("studentAddress");
+        if (studentAddress) {
+            console.log("Student address on home page:", studentAddress);
+        } else {
+            alert("No student address found.");
+        }
+        const fileInput = document.getElementById("fileInput");
+        const fileSelect = document.getElementById("fileSelect");
+        const fileDetails = document.getElementById("fileDetails");
+        const submitButton = document.getElementById("submitButton");
+
+        // Add dragover effect
+        dropZone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZone.classList.add("dragover");
+        });
+
+        dropZone.addEventListener("dragleave", () => {
+            dropZone.classList.remove("dragover");
+        });
+
+        let fileProcessed = false;
+
+        // Handle file drop
+       /* dropZone.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropZone.classList.remove("dragover");
+
+                const files = e.dataTransfer.files;
+                if (files.length && !fileProcessed) {
+                    handleFiles(files);
+                    fileProcessed = true; // Mark as processed
+                }
+            });*/
+
+        // Open file selector on click
+        //dropZone.addEventListener("click", () => fileInput.click());
+
+        fileSelect.addEventListener("click", () => fileInput.click());
+
+        fileInput.addEventListener("change", () => {
+            const files = fileInput.files;
+            if (files.length && !fileProcessed) {
+                handleFiles(files);
+                fileProcessed = true; // Mark as processed
+            }
+        });
+        // Function to handle files
+        function handleFiles(files) {
+            const file = files[0];
+            if (file.type !== "application/pdf") {
+                alert("Only PDF files are allowed!");
+                return;
+            }
+
+            // Create a Blob URL for the file
+            const fileUrl = URL.createObjectURL(file);
+
+            // Display file name as a downloadable link
+            fileDetails.innerHTML = `
+                <strong>Uploaded File:</strong> 
+                <a href="${fileUrl}" download="${file.name}">${file.name}</a>
+            `;
+        }
+
+        /*// Submit button click handler
+        submitButton.addEventListener("click", () => {
+            if (!fileDetails.innerHTML) {
+                alert("Please upload a file before submitting!");
+                return;
+            }
+            alert("File submitted for verification!");
+        });*/
+        // Submit button click handler
+  submitButton.addEventListener("click", async () => {
+      if (!fileDetails.innerHTML) {
+          alert("Please upload a file before submitting!");
+          return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append("certificatePdf", file);
+
+      // Add the claimed owner address
+    const claimedOwner = studentAddress;
+    formData.append("claimedOwner", claimedOwner);
+
+      try {
+          const response = await fetch("/verify-certificate", {
+              method: "POST",
+              body: formData,
+          });
+
+          const result = await response.json();
+
+          if (result.valid) {
+              alert("Certificate verify SUCCESSFUL!!!!!!, Owner and metadata MATCH!!!!!");
+          } else {
+              alert("Certificate verification FAILED!!!!!! Owner or metadata MISMATCH!!!!");
+          }
+      } catch (err) {
+          console.error("Error verifying certificate:", err);
+          alert("Error verifying certificate. Please try again.");
+      }
+  });
+    </script>
+</body>
+</html>
